@@ -61,11 +61,6 @@ body .fn-hide {display:none;}
 ::-webkit-scrollbar-thumb:active{background:#828181;}
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?68245288');
-  src: url('../font/fontello.eot?68245288#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff?68245288') format('woff'),
-       url('../font/fontello.ttf?68245288') format('truetype'),
-       url('../font/fontello.svg?68245288#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
