@@ -63,8 +63,7 @@ var im = {
     },
     close: function () {
         this.data.wsServer.onclose = function (evt) {
-            im.notice('不妙，链接断开了');
-            this.layerErrorMsg('不妙，链接断开了');
+            im.layerErrorMsg('不妙，链接断开了');
         }
     },
     error: function () {
@@ -151,9 +150,9 @@ var im = {
         if (strDate >= 0 && strDate <= 9) {
             strDate = "0" + strDate;
         }
-        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+        var currentDate = date.getFullYear() + seperator1 + month + seperator1 + strDate
             + " " + date.getHours() + seperator2 + date.getMinutes()
             + seperator2 + date.getSeconds();
-        return currentdate;
+        return currentDate;
     }
 };

@@ -3,7 +3,7 @@
 require './src/WebSocket.php';
 
 $config = [
-    'server' => '0.0.0.0',
+    'server' => '160.19.51.200',
     'port'   => 9501,
 ];
 
