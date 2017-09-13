@@ -3,22 +3,23 @@
 require './src/WebSocket.php';
 
 $config = [
-    'ws' => [
+    'ws'    => [
         'host' => '0.0.0.0',
-        'port'   => 9501,
+        'port' => 9501,
     ],
     'redis' => [
         'host' => '127.0.0.1',
-        'port'   => 6379,
-    ]
+        'port' => 6379,
+    ],
 ];
 
 $server = new WebSocket($config);
 
-$server->authenticator = function ($request){
+$server->authenticator = function ($request) {
     $userInfo = [
-        'name' => 'King'
+        'name' => 'King',
     ];
+
     // return $userInfo;
 
     return false;

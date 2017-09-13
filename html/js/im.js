@@ -33,15 +33,19 @@ var im = {
     },
     open: function () {
         this.data.wsServer.onopen = function (evt) {
-            im.notice('连接成功');
             console.log(evt);
+            // im.notice('连接成功');
         }
     },
     messages: function () {
         this.data.wsServer.onmessage = function (evt) {
+            console.log(evt);
             var data = jQuery.parseJSON(evt.data);
-            console.log(data);
             switch (data.type) {
+                case 'openSuccess':
+                    im.data.info = data.user;
+                    im.showAllUser(data.all);
+                    break;
                 case 'open':
                     im.appendUser(data.user.name, data.user.avatar, data.user.fd);
                     im.notice(data.message);
@@ -50,13 +54,11 @@ var im = {
                     im.removeUser(data.user.fd);
                     im.notice(data.message);
                     break;
-                case 'openSuccess':
-                    im.data.info = data.user;
-                    im.showAllUser(data.all);
-
-                    break;
                 case 'message':
                     im.newMessage(data);
+                    break;
+                case 'error':
+                    im.layerErrorMsg(data.message);
                     break;
             }
         };

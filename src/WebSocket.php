@@ -17,13 +17,13 @@ class WebSocket
     public $afterSendMsgCallback;
 
     private $config = [
-        'ws' => [
+        'ws'    => [
             'host' => '0.0.0.0',
-            'port'   => 9501,
+            'port' => 9501,
         ],
         'redis' => [
             'host' => '127.0.0.1',
-            'port'   => 9501,
+            'port' => 9501,
         ],
     ];
 
@@ -39,16 +39,34 @@ class WebSocket
         $this->initRedis();
         $this->createSwooleTable();
 
-        $this->beforeAuthCallback = function () {};
-        $this->afterAuthCallback = function () {};
-        $this->authenticator = function () {};
-        $this->beforeSendMsgCallback = function () {};
-        $this->afterSendMsgCallback = function () {};
+        $this->beforeAuthCallback = function () {
+        };
+
+        $this->afterAuthCallback = function () {
+        };
+
+        $this->authenticator = function () {
+        };
+
+        $this->beforeSendMsgCallback = function () {
+        };
+
+        $this->afterSendMsgCallback = function () {
+        };
     }
 
     public function run()
     {
         $this->server = new Swoole\Websocket\Server($this->config['ws']['host'], $this->config['ws']['port']);
+
+        $this->server->set([
+            'daemonize' => false,
+            // 'log_file'        => '/www/log/swoole.log',
+            // 'reactor_num'     => 2,
+            // 'worker_num'      => 2,
+            // 'task_worker_num' => 4,
+            // 'max_request'     => 100,
+        ]);
 
         $this->server->on('open', [$this, 'onOpen']);
         $this->server->on('message', [$this, 'onMessage']);
@@ -62,13 +80,15 @@ class WebSocket
         call_user_func($this->beforeAuthCallback, $server, $request);
 
         $userInfo = $this->auth($request);
-
+        if (false === $userInfo) {
+            return;
+        }
         // $this->redis->set($request->fd, 1);
 
         $user = [
             'fd'     => $request->fd,
             'name'   => $userInfo['name'],
-            'avatar' => './images/avatar/' . rand(1,2) . '.jpg',
+            'avatar' => './images/avatar/' . rand(1, 2) . '.jpg',
         ];
         $this->table->set($request->fd, $user);
 
@@ -127,14 +147,23 @@ class WebSocket
         return $users;
     }
 
+    /**
+     * auth
+     * @auth King
+     *
+     * @param $request
+     *
+     * @return bool|array
+     */
     private function auth($request)
     {
         $result = call_user_func($this->authenticator, $request);
 
         if (false === $result) {
             // 关闭连接
-            $this->server->push($request->fd, json_encode(['type' => 'close','message' => 'auth failed']));
-            $this->server->close($request->fd);
+            $this->server->push($request->fd, json_encode(['type' => 'error', 'message' => '鉴权失败，请重新登录']));
+
+            return false;
         }
 
         return $result;
