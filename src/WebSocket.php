@@ -8,7 +8,6 @@ class WebSocket
     private $server;
 
     private $table;
-    private $redis;
 
     public $beforeAuthCallback;
     public $afterAuthCallback;
@@ -20,11 +19,7 @@ class WebSocket
         'ws'    => [
             'host' => '0.0.0.0',
             'port' => 9501,
-        ],
-        'redis' => [
-            'host' => '127.0.0.1',
-            'port' => 9501,
-        ],
+        ]
     ];
 
     public function __construct($config)
@@ -36,7 +31,6 @@ class WebSocket
 
     private function init()
     {
-        $this->initRedis();
         $this->createSwooleTable();
 
         $this->beforeAuthCallback = function () {
@@ -83,12 +77,12 @@ class WebSocket
         if (false === $userInfo) {
             return;
         }
-        // $this->redis->set($request->fd, 1);
 
         $user = [
             'fd'     => $request->fd,
+            'uid'    => $userInfo['id'],
             'name'   => $userInfo['name'],
-            'avatar' => './images/avatar/' . rand(1, 2) . '.jpg',
+            'avatar' => $userInfo['avatar'],
         ];
         $this->table->set($request->fd, $user);
 
@@ -173,15 +167,10 @@ class WebSocket
     {
         $this->table = new \Swoole\Table(1024);
         $this->table->column('fd', \Swoole\Table::TYPE_INT);
+        $this->table->column('uid', \Swoole\Table::TYPE_INT);
         $this->table->column('name', \Swoole\Table::TYPE_STRING, 255);
         $this->table->column('avatar', \Swoole\Table::TYPE_STRING, 255);
 
         $this->table->create();
-    }
-
-    private function initRedis()
-    {
-        $this->redis = new Redis();
-        $this->redis->connect($this->config['redis']['host'], $this->config['redis']['port']);
     }
 }

@@ -14,15 +14,22 @@ $config = [
 ];
 
 $server = new WebSocket($config);
+$redis  = new Redis();
+$redis->connect($config['redis']['host'], $config['redis']['port']);
 
-$server->authenticator = function ($request) {
-    $userInfo = [
-        'name' => 'King',
-    ];
+$server->authenticator = function ($request) use ($redis) {
+    $accessToken = $request->get['access-token'];
 
-    // return $userInfo;
+    if (!$accessToken || !$userInfo = $redis->get($accessToken)) {
+        return false;
+    }
 
-    return false;
+    // $userInfo = [
+    //     'id'   => '1',
+    //     'name' => 'King',
+    //     'avatar' => './images/avatar/1.jpg',
+    // ];
+    return unserialize($userInfo);
 };
 
 $server->run();
