@@ -4,7 +4,7 @@ require './src/WebSocket.php';
 
 $config = [
     'ws'    => [
-        'host' => '0.0.0.0',
+        'host' => 'im.xin-ge.cc',
         'port' => 9501,
     ],
     'redis' => [

@@ -16,7 +16,7 @@ $(function () {
 });
 
 var config = {
-    server: 'ws://160.19.51.200:9501?access-token=1234567'
+    server: 'ws://im.xin-ge.cc:9501?access-token=1234567'
 };
 
 var im = {
